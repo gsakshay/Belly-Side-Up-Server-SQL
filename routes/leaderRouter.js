@@ -1,6 +1,7 @@
 const express = require("express");
 const uuid = require('uuid');
-const leader  = require("../models/leaders")
+const leader  = require("../models/leaders");
+const validateUser = require("../authenticate");
 
 const leaderRouter = express.Router();
 leaderRouter.use(express.json());
@@ -16,7 +17,7 @@ leaderRouter
     })
     .catch(err => res.render('error', {error: err}))
   })
-  .post((req, res, next) => {
+  .post(validateUser, (req, res, next) => {
     const { name, image, designation, abbr, description , featured } = req.body;
     leader.create({
         guid: uuid.v4(), name, image, designation, abbr, description , featured
@@ -28,11 +29,11 @@ leaderRouter
         next(err);
     })
   })
-  .put((req, res, next) => {
+  .put(validateUser, (req, res, next) => {
     res.statusCode = 403;
     res.end("PUT operation not supported on /leaders");
   })
-  .delete((req, res, next) => {
+  .delete(validateUser, (req, res, next) => {
     leader.destroy({
     truncate: true
     }).then(leaders=>{
@@ -60,11 +61,11 @@ leaderRouter
         next(err);
     })
   })
-  .post((req, res, next) => {
+  .post(validateUser, (req, res, next) => {
     res.statusCode = 403;
     res.end("POST operation not supported on /leaders/" + req.params.leaderId);
   })
-  .put((req, res, next) => {
+  .put(validateUser, (req, res, next) => {
     const { leaderId } = req.params;
     const { name, image, designation, abbr, description , featured } = req.body;
     leader.update({
@@ -91,7 +92,7 @@ leaderRouter
         next(err);
     })
   })
-  .delete((req, res, next) => {
+  .delete(validateUser, (req, res, next) => {
     const { leaderId } = req.params;
     leader.destroy({
         where: {

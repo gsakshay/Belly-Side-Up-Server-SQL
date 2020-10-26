@@ -1,6 +1,7 @@
 const express = require("express");
 const uuid = require('uuid');
 const promotion  = require("../models/promotions")
+const validateUser = require("../authenticate");
 
 const promoRouter = express.Router();
 promoRouter.use(express.json());
@@ -16,7 +17,7 @@ promoRouter
     })
     .catch(err => res.render('error', {error: err}))
   })
-  .post((req, res, next) => {
+  .post(validateUser, (req, res, next) => {
     const {name, image, description, price, label, featured} = req.body;
     promotion.create({
       guid: uuid.v4(), name, image, description, price, label, featured
@@ -26,11 +27,11 @@ promoRouter
         res.json(promotion);
     }).catch(err => res.render('error', {error: err}))
   })
-  .put((req, res, next) => {
+  .put(validateUser, (req, res, next) => {
     res.statusCode = 403;
     res.end("PUT operation not supported on /promotions");
   })
-  .delete((req, res, next) => {
+  .delete(validateUser, (req, res, next) => {
     promotion.destroy({
         truncate: true
     }).then(promotions=>{
@@ -42,7 +43,7 @@ promoRouter
 
 promoRouter
   .route("/:promoId")
-  .get((req, res, next) => {
+  .get(validateUser, (req, res, next) => {
     const { promoId } = req.params;
     promotion.findOne({
         where:{
@@ -56,7 +57,7 @@ promoRouter
         next(err);
     })
   })
-  .post((req, res, next) => {
+  .post(validateUser, (req, res, next) => {
     res.statusCode = 403;
     res.end("POST operation not supported on /promotions/" + req.params.promoId);
   })
@@ -87,8 +88,7 @@ promoRouter
         next(err);
     })
   })
-
-  .delete((req, res, next) => {
+  .delete(validateUser, (req, res, next) => {
     const { promoId } = req.params;
     promotion.destroy({
       where: {

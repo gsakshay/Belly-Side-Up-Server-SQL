@@ -1,6 +1,7 @@
 const express = require("express");
 const uuid = require('uuid');
 const dish  = require("../models/dishes")
+const validateUser = require("../authenticate")
 
 const dishRouter = express.Router();
 dishRouter.use(express.json());
@@ -16,23 +17,25 @@ dishRouter
         })
         .catch(err => res.render('error', {error: err}))
     })
-    .post((req, res, next) => {
+    .post(validateUser, (req, res, next) => {
         const {name, description, image, category, label, price, featured} = req.body;
         dish.create({
-            guid: uuid.v4(), name, description, image, category, label, price, featured
+        guid: uuid.v4(), name, description, image, category, label, price, featured
         }).then(dish=>{
             res.statusCode = 200;
             res.setHeader("Content-Type", "application/json");
             res.json(dish);
         }).catch(err=>{
-            next(err);
+            res.statusCode = 400
+            res.setHeader("Content-Type", "application/json");
+            res.json({err});
         })
     })
-    .put((req, res, next) => {
+    .put(validateUser, (req, res, next) => {
         res.statusCode = 403;
         res.end("PUT operation not supported on /dishes");
     })
-    .delete((req, res, next) => {
+    .delete(validateUser, (req, res, next) => {
         dish.destroy({
             truncate: true
         }).then(dishes=>{
@@ -63,12 +66,12 @@ dishRouter
         })
     })
 
-    .post((req, res, next) => {
+    .post(validateUser, (req, res, next) => {
     res.statusCode = 403;
     res.end("POST operation not supported on /dishes/" + req.params.dishId);
     })
 
-    .put((req, res, next) => {
+    .put(validateUser, (req, res, next) => {
         const  {dishId} = req.params;
         const {name, description, image, category, label, price, featured} = req.body;
         dish.update({
@@ -96,7 +99,7 @@ dishRouter
         })
     })
 
-    .delete((req, res, next) => {
+    .delete(validateUser, (req, res, next) => {
         const  {dishId} = req.params;
         dish.destroy({
             where: {

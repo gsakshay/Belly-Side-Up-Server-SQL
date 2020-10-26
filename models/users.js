@@ -1,6 +1,7 @@
-/* const { DataTypes, Model } = require('sequelize');
+const { DataTypes, Model } = require('sequelize');
 const sequelize = require('../database/database');
 const uuid = require('uuid');
+const passportLocalSequelize = require('passport-local-sequelize');
 
 class user extends Model {}
 user.init({
@@ -18,7 +19,7 @@ user.init({
     },
     firstName: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: true
     },
     lastName: {
         type: DataTypes.STRING,
@@ -27,10 +28,19 @@ user.init({
     admin:{
         type: DataTypes.BOOLEAN,
         defaultValue: false,  
-    }
+    },
+    username: {
+      type: DataTypes.STRING,
+      unique: true,
+    },
+    hash: {
+      type: DataTypes.STRING
+    },
 }, {
   tableName: "users",
   sequelize,
 });
 
-module.exports =  user; */
+user.sync().then(()=>console.log("Table is created/updated"))
+
+module.exports =  user;
