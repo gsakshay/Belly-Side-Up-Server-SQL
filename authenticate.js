@@ -14,6 +14,7 @@ const validateUser = (req, res, next) => {
             err,decoded
             });
         }else if(decoded){
+            req.user = decoded
             next();
         }
         });

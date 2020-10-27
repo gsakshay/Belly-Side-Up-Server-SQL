@@ -2,6 +2,7 @@ const express = require("express");
 const uuid = require('uuid');
 const leader  = require("../models/leaders");
 const validateUser = require("../authenticate");
+const upload = require("../helpers/imageUplaod")
 
 const leaderRouter = express.Router();
 leaderRouter.use(express.json());
@@ -17,8 +18,11 @@ leaderRouter
     })
     .catch(err => res.render('error', {error: err}))
   })
-  .post(validateUser, (req, res, next) => {
-    const { name, image, designation, abbr, description , featured } = req.body;
+  .post(validateUser, upload.single('image'),  (req, res, next) => {
+    const { name, designation, abbr, description , featured } = req.body;
+    let image = req.file.path;
+    const host = process.env.PORT || 'localhost:3000'
+    image = host + image.replace("public", "")
     leader.create({
         guid: uuid.v4(), name, image, designation, abbr, description , featured
     }).then(leader=>{

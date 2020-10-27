@@ -1,9 +1,8 @@
-/* const { DataTypes, Model } = require('sequelize');
+const { DataTypes, Model } = require('sequelize');
 const sequelize = require('../database/database');
 
-class users extends Model {}
-exports.users = users;
-User.init({
+class comment extends Model {}
+comment.init({
     id: {
       allowNull: false,
       autoIncrement: true,
@@ -15,23 +14,31 @@ User.init({
       type: DataTypes.UUID,
       unique: true,
     },
-    firstName: {
-        type: DataTypes.STRING,
-        allowNull: false
+    userId: {
+      allowNull: false,
+      type: DataTypes.UUID,
     },
-    lastName: {
-        type: DataTypes.STRING,
-        allowNull
+    rating: {
+      allowNull: false,
+      type: DataTypes.INTEGER,
+      validate:{
+        min: 1,
+        max: 5
+      }
     },
-    admin:{
-        type: DataTypes.BOOLEAN,
-        defaultValue: false,  
-    }
+    dishId: {
+      allowNull: false,
+      type: DataTypes.UUID
+    },
+    comment: {
+      allowNull: false,
+      type: DataTypes.TEXT
+    },
 }, {
-  tableName: "users",
+  tableName: "comments",
   sequelize,
 });
 
-user.sync().then(() => {
-  console.log('table created');
-}); */
+comment.sync().then(()=>console.log("Table is created/updated"))
+
+module.exports =  comment;

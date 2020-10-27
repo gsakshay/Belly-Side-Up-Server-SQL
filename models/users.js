@@ -1,7 +1,7 @@
 const { DataTypes, Model } = require('sequelize');
 const sequelize = require('../database/database');
-const uuid = require('uuid');
-const passportLocalSequelize = require('passport-local-sequelize');
+const comment = require("./comments");
+const favorite = require('./favorite');
 
 class user extends Model {}
 user.init({
@@ -14,8 +14,7 @@ user.init({
     guid: {
       allowNull: false,
       type: DataTypes.UUID,
-      unique: true,
-      defaultValue: uuid.v4(),
+      unique: true
     },
     firstName: {
         type: DataTypes.STRING,
@@ -40,6 +39,18 @@ user.init({
   tableName: "users",
   sequelize,
 });
+
+user.hasMany(comment, {
+  sourceKey: "guid",
+  foreignKey: 'userId'
+});
+comment.belongsTo(user);
+
+user.hasMany(favorite, {
+  sourceKey: "guid",
+  foreignKey: 'userId'
+});
+favorite.belongsTo(user)
 
 user.sync().then(()=>console.log("Table is created/updated"))
 

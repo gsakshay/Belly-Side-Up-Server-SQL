@@ -1,6 +1,7 @@
 const { DataTypes, Model } = require('sequelize');
 const sequelize = require('../database/database');
-const uuid = require('uuid');
+const comment = require("./comments")
+const favorite = require("./favorite")
 
 class dish extends Model {}
 dish.init({
@@ -47,6 +48,18 @@ dish.init({
   tableName: "dishes",
   sequelize,
 });
+
+dish.hasMany(comment, {
+  sourceKey: "guid",
+  foreignKey: 'dishId'
+});
+comment.belongsTo(dish);
+
+dish.hasOne(favorite, {
+  sourceKey: "guid",
+  foreignKey: 'dishId'
+});
+favorite.belongsTo(dish)
 
 dish.sync().then(()=>console.log("Table is created/updated"))
 

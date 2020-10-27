@@ -3,6 +3,9 @@ const uuid = require('uuid');
 const user  = require("../models/users")
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const validateUser = require("../authenticate");
+const favorite = require("../models/favorite");
+const dish = require("../models/dishes")
 
 const userRouter = express.Router();
 userRouter.use(express.json());
@@ -56,7 +59,8 @@ userRouter
                 res.json({error: true, err})
               }else{
                 res.json({
-                  token
+                  token,
+                  user
                 })
               }
             });
@@ -81,6 +85,84 @@ userRouter
   userRouter  
     .post("logout", (req, res, next)=>{
       
+    })  
+
+  userRouter
+    .route("/:userId")
+    .get((req, res, next)=>{
+      const { userId } = req.params;
+      user.findOne({
+        where: {
+          guid: userId
+        }
+      }).then(user=>{
+        user.getComments()
+          .then(comments=>{
+            res.statusCode = 200;
+            res.setHeader("Content-Type", "application/json");
+            res.json({user, comments});
+          })
+      })
+      .catch(err=>{
+        res.json(err);
+      })
+    });
+
+  userRouter
+    .route("/favorites/:userId")
+    .get(validateUser, (req, res, next)=>{
+      const { userId } = req.params
+      favorite.findAll({
+        where:{
+          userId
+        }
+      })
+      .then(favorites=>{
+        res.statusCode = 200;
+        res.setHeader("Content-Type", "application/json");
+        res.json(favorites);
+      })
+      .catch(err=>{
+        res.json(err)
+      })
+    });
+
+  userRouter
+    .route("/favorites/:dishId")
+    .post(validateUser, (req, res, next)=>{
+      const { dishId } = req.params;
+      favorite.create({
+        userId: req.user.user.guid, dishId
+      })
+      .then(favorite=>{
+          res.statusCode = 200;
+          res.setHeader("Content-Type", "application/json");
+          res.json(favorite);
+      }).catch(err=>{
+          res.statusCode = 400
+          res.setHeader("Content-Type", "application/json");
+          res.json({err, user: req.user});
+      })
+    })
+    .delete(validateUser, (req, res, next)=>{
+      const { dishId } = req.params;
+      favorite.destroy({
+        where:{
+          userId: req.user.user.guid,
+          dishId
+        }
+      })
+      .then(favorite=>{
+          if(favorite){
+            res.statusCode = 200;
+            res.setHeader("Content-Type", "application/json");
+            res.json("Removed the dish from favorites");
+          }
+      }).catch(err=>{
+          res.statusCode = 400
+          res.setHeader("Content-Type", "application/json");
+          res.json({err, user: req.user});
+      })
     })  
 
 module.exports = userRouter;

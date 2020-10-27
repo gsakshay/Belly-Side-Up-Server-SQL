@@ -2,6 +2,7 @@ const express = require("express");
 const uuid = require('uuid');
 const promotion  = require("../models/promotions")
 const validateUser = require("../authenticate");
+const upload = require("../helpers/imageUplaod")
 
 const promoRouter = express.Router();
 promoRouter.use(express.json());
@@ -17,8 +18,11 @@ promoRouter
     })
     .catch(err => res.render('error', {error: err}))
   })
-  .post(validateUser, (req, res, next) => {
-    const {name, image, description, price, label, featured} = req.body;
+  .post(validateUser, upload.single('image'), (req, res, next) => {
+    const {name, description, price, label, featured} = req.body;
+    let image = req.file.path;
+    const host = process.env.PORT || 'localhost:3000'
+    image = host + image.replace("public", "")
     promotion.create({
       guid: uuid.v4(), name, image, description, price, label, featured
     }).then(promotion=>{

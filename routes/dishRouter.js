@@ -2,6 +2,7 @@ const express = require("express");
 const uuid = require('uuid');
 const dish  = require("../models/dishes")
 const validateUser = require("../authenticate")
+const upload = require("../helpers/imageUplaod")
 
 const dishRouter = express.Router();
 dishRouter.use(express.json());
@@ -17,8 +18,11 @@ dishRouter
         })
         .catch(err => res.render('error', {error: err}))
     })
-    .post(validateUser, (req, res, next) => {
-        const {name, description, image, category, label, price, featured} = req.body;
+    .post(validateUser, upload.single('image'), (req, res, next) => {
+        const {name, description, category, label, price, featured} = req.body;
+        let image = req.file.path;
+        const host = process.env.PORT || 'localhost:3000'
+        image = host + image.replace("public", "")
         dish.create({
         guid: uuid.v4(), name, description, image, category, label, price, featured
         }).then(dish=>{
@@ -58,9 +62,12 @@ dishRouter
                 guid: dishId
             }
         }).then(dish=>{
-            res.statusCode = 200;
-            res.setHeader("Content-Type", "application/json");
-            res.json(dish);
+            dish.getComments()
+                .then(comments=>{
+                    res.statusCode = 200;
+                    res.setHeader("Content-Type", "application/json");
+                    res.json({dish, comments});
+                })
         }).catch(err=>{
             next(err);
         })
