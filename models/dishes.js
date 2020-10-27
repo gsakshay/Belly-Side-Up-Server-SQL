@@ -9,12 +9,12 @@ dish.init({
     id: {
       allowNull: false,
       autoIncrement: true,
-      primaryKey: true,
+      primaryKey: true,   
       type: DataTypes.BIGINT,
     },
     guid: {
       allowNull: false,
-      type: DataTypes.UUID,
+      type: DataTypes.UUID,   
       unique: true,
     },
     name: {
@@ -54,13 +54,19 @@ dish.hasMany(comment, {
   sourceKey: "guid",
   foreignKey: 'dishId'
 });
-comment.belongsTo(dish);
+comment.belongsTo(dish, {
+  sourceKey: "guid",
+  foreignKey: 'dishId'
+});
 
 dish.hasMany(order, {
   sourceKey: "guid",
   foreignKey: 'dishId'
 });
-order.belongsTo(dish);
+order.belongsTo(dish, {
+  sourceKey: "guid",
+  foreignKey: 'dishId'
+});
 
 dish.sync({alter: true}).then(()=>console.log("Table is created/updated"))
 

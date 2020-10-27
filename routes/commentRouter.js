@@ -3,6 +3,7 @@ const uuid = require('uuid');
 const comment  = require("../models/comments")
 const authentication = require("../helpers/authHelper");
 const user = require("../models/users");
+const dish = require("../models/dishes")
 
 const commentRouter = express.Router();
 commentRouter.use(express.json());
@@ -15,10 +16,7 @@ commentRouter
             where:{
                 dishId
             },
-            /* include: user */
-            include: {
-                model: user,
-            }
+            include: user
         }).then(comments=>{
             res.statusCode = 200;
             res.setHeader("Content-Type", "application/json");

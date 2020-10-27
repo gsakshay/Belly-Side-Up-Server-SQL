@@ -23,6 +23,11 @@ favorite.init({
   sequelize,
 });
 
+favorite.belongsTo(dish, {
+  sourceKey: "guid",
+  foreignKey: 'dishId'
+});
+
 favorite.sync({alter: true}).then(()=>console.log("Table is created/updated"))
 
 module.exports =  favorite;

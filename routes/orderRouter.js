@@ -16,7 +16,8 @@ orderRouter
         order.findAll({
             where:{
                 userId
-            }
+            },
+            include: dish
         })
         .then(orders => {
             res.statusCode = 200;

@@ -45,19 +45,28 @@ user.hasMany(comment, {
   sourceKey: "guid",
   foreignKey: 'userId'
 });
-comment.belongsTo(user);
+comment.belongsTo(user, {
+  sourceKey: "guid",
+  foreignKey: 'userId'
+});
 
 user.hasMany(favorite, {
   sourceKey: "guid",
   foreignKey: 'userId'
 });
-favorite.belongsTo(user)
+favorite.belongsTo(user ,{
+  sourceKey: "guid",
+  foreignKey: 'userId'
+})
 
 user.hasMany(order, {
   sourceKey: "guid",
   foreignKey: 'userId'
 });
-order.belongsTo(user)
+order.belongsTo(user, {
+  sourceKey: "guid",
+  foreignKey: 'userId'
+})
 
 user.sync({alter: true}).then(()=>console.log("Table is created/updated"))
 

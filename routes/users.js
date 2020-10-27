@@ -112,7 +112,8 @@ userRouter
       favorite.findAll({
         where:{
           userId
-        }
+        },
+        include: dish
       })
       .then(favorites=>{
           res.statusCode = 200;
