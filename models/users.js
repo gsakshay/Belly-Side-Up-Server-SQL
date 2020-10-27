@@ -2,6 +2,7 @@ const { DataTypes, Model } = require('sequelize');
 const sequelize = require('../database/database');
 const comment = require("./comments");
 const favorite = require('./favorite');
+const order = require('./orders');
 
 class user extends Model {}
 user.init({
@@ -52,6 +53,12 @@ user.hasMany(favorite, {
 });
 favorite.belongsTo(user)
 
-user.sync().then(()=>console.log("Table is created/updated"))
+user.hasMany(order, {
+  sourceKey: "guid",
+  foreignKey: 'userId'
+});
+order.belongsTo(user)
+
+user.sync({alter: true}).then(()=>console.log("Table is created/updated"))
 
 module.exports =  user;

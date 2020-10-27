@@ -1,7 +1,8 @@
 const express = require("express");
 const uuid = require('uuid');
 const comment  = require("../models/comments")
-const validateUser = require("../authenticate")
+const authentication = require("../helpers/authHelper");
+const user = require("../models/users");
 
 const commentRouter = express.Router();
 commentRouter.use(express.json());
@@ -13,16 +14,20 @@ commentRouter
         comment.findAll({
             where:{
                 dishId
+            },
+            /* include: user */
+            include: {
+                model: user,
             }
         }).then(comments=>{
             res.statusCode = 200;
             res.setHeader("Content-Type", "application/json");
             res.json(comments);
         }).catch(err=>{
-            next(err);
+            res.json(err)
         })
     })
-    .post(validateUser, (req, res, next) => {
+    .post(authentication.validateUser, (req, res, next) => {
         const {dishId} = req.params;
         const {rating, comment: newComment} = req.body;
         comment.create({
@@ -34,15 +39,16 @@ commentRouter
         }).catch(err=>{
             res.statusCode = 400
             res.setHeader("Content-Type", "application/json");
-            res.json({err, user: req.user});
+            res.json({err});
         })
     });
 commentRouter
-    .delete("/delete/:commentId",validateUser, (req, res, next) => {
+    .delete("/delete/:commentId",authentication.validateUser, (req, res, next) => {
         const  { commentId } = req.params;
         comment.destroy({
             where: {
-                guid: commentId
+                guid: commentId,
+                userId: req.user.user.guid
             }
         }).then(comment=>{
             if(comment){
@@ -51,7 +57,7 @@ commentRouter
                 res.json("Comment deleted");
             }
         }).catch(err=>{
-            next(err);
+            res.json(err);
         })
     });
 

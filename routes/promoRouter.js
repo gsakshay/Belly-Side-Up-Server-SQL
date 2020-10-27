@@ -1,7 +1,7 @@
 const express = require("express");
 const uuid = require('uuid');
 const promotion  = require("../models/promotions")
-const validateUser = require("../authenticate");
+const authentication = require("../helpers/authHelper")
 const upload = require("../helpers/imageUplaod")
 
 const promoRouter = express.Router();
@@ -18,7 +18,7 @@ promoRouter
     })
     .catch(err => res.render('error', {error: err}))
   })
-  .post(validateUser, upload.single('image'), (req, res, next) => {
+  .post(authentication.validateUser, authentication.validateAdmin, upload.single('image'), (req, res, next) => {
     const {name, description, price, label, featured} = req.body;
     let image = req.file.path;
     const host = process.env.PORT || 'localhost:3000'
@@ -31,11 +31,11 @@ promoRouter
         res.json(promotion);
     }).catch(err => res.render('error', {error: err}))
   })
-  .put(validateUser, (req, res, next) => {
+  .put(authentication.validateUser, authentication.validateAdmin, (req, res, next) => {
     res.statusCode = 403;
     res.end("PUT operation not supported on /promotions");
   })
-  .delete(validateUser, (req, res, next) => {
+  .delete(authentication.validateUser, authentication.validateAdmin, (req, res, next) => {
     promotion.destroy({
         truncate: true
     }).then(promotions=>{
@@ -47,7 +47,7 @@ promoRouter
 
 promoRouter
   .route("/:promoId")
-  .get(validateUser, (req, res, next) => {
+  .get(authentication.validateUser, authentication.validateAdmin, (req, res, next) => {
     const { promoId } = req.params;
     promotion.findOne({
         where:{
@@ -58,14 +58,14 @@ promoRouter
         res.setHeader("Content-Type", "application/json");
         res.json(promotion);
     }).catch(err=>{
-        next(err);
+        res.json(err);
     })
   })
-  .post(validateUser, (req, res, next) => {
+  .post(authentication.validateUser, authentication.validateAdmin, (req, res, next) => {
     res.statusCode = 403;
     res.end("POST operation not supported on /promotions/" + req.params.promoId);
   })
-  .put((req, res, next) => {
+  .put(authentication.validateUser, authentication.validateAdmin, (req, res, next) => {
     const { promoId } = req.params;
     const { name, image, description, price, label, featured } = req.body;
     promotion.update({
@@ -85,14 +85,14 @@ promoRouter
                 res.setHeader("Content-Type", "application/json");
                 res.json(promotion);
             }).catch(err=>{
-                next(err);
+                res.json(err);
             })
         }
     }).catch(err=>{
-        next(err);
+        res.json(err);
     })
   })
-  .delete(validateUser, (req, res, next) => {
+  .delete(authentication.validateUser, authentication.validateAdmin, (req, res, next) => {
     const { promoId } = req.params;
     promotion.destroy({
       where: {
@@ -103,7 +103,7 @@ promoRouter
       res.setHeader("Content-Type", "application/json");
       res.json("Promotion deleted");
     }).catch(err=>{
-      next(err);
+      res.json(err);
     })
   });
 

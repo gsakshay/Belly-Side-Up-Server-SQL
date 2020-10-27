@@ -48,6 +48,6 @@ promotion.init({
   sequelize,
 });
 
-promotion.sync().then(()=>console.log("Table is created/updated"))
+promotion.sync({alter: true}).then(()=>console.log("Table is created/updated"))
 
 module.exports =  promotion;

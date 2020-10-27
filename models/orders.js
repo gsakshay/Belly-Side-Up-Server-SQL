@@ -2,7 +2,7 @@ const { DataTypes, Model } = require('sequelize');
 const sequelize = require('../database/database');
 
 class order extends Model {}
-User.init({
+order.init({
     id: {
       allowNull: false,
       autoIncrement: true,
@@ -17,7 +17,6 @@ User.init({
     userId: {
       allowNull: false,
       type: DataTypes.UUID,
-      unique: true,
     },
     dishId: {
       allowNull: false,
@@ -32,6 +31,6 @@ User.init({
   sequelize,
 });
 
-order.sync().then(()=>console.log("Table is created/updated"))
+order.sync({alter: true}).then(()=>console.log("Table is created/updated"))
 
 module.exports =  order;

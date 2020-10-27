@@ -3,15 +3,16 @@ const uuid = require('uuid');
 const user  = require("../models/users")
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const validateUser = require("../authenticate");
+const authentication = require("../helpers/authHelper")
 const favorite = require("../models/favorite");
-const dish = require("../models/dishes")
+const dish = require("../models/dishes");
+const comment = require("../models/comments");
 
 const userRouter = express.Router();
 userRouter.use(express.json());
 
 userRouter
-  .get("/", (req, res, next) => {
+  .get("/", authentication.validateUser, authentication.validateAdmin, (req, res, next) => {
     user.findAll()
       .then(users=> {
         res.statusCode = 200;
@@ -40,7 +41,7 @@ userRouter
         }
         ).catch(err=>res.json({error: err}))
       }catch(err){
-        next(err)
+        res.json(err)
       }
     })
   userRouter  
@@ -83,25 +84,21 @@ userRouter
       }
     })
   userRouter  
-    .post("logout", (req, res, next)=>{
+    .post("logout", authentication.validateUser, (req, res, next)=>{
       
     })  
 
   userRouter
     .route("/:userId")
-    .get((req, res, next)=>{
+    .get(authentication.validateUser, (req, res, next)=>{
       const { userId } = req.params;
       user.findOne({
         where: {
           guid: userId
-        }
+        },
+        include: comment
       }).then(user=>{
-        user.getComments()
-          .then(comments=>{
-            res.statusCode = 200;
-            res.setHeader("Content-Type", "application/json");
-            res.json({user, comments});
-          })
+          res.json(user);
       })
       .catch(err=>{
         res.json(err);
@@ -109,18 +106,18 @@ userRouter
     });
 
   userRouter
-    .route("/favorites/:userId")
-    .get(validateUser, (req, res, next)=>{
-      const { userId } = req.params
+    .route("/favorites/all")
+    .get(authentication.validateUser, (req, res, next)=>{
+      const userId = req.user.user.guid
       favorite.findAll({
         where:{
           userId
         }
       })
       .then(favorites=>{
-        res.statusCode = 200;
-        res.setHeader("Content-Type", "application/json");
-        res.json(favorites);
+          res.statusCode = 200;
+          res.setHeader("Content-Type", "application/json");
+          res.json(favorites);
       })
       .catch(err=>{
         res.json(err)
@@ -129,7 +126,7 @@ userRouter
 
   userRouter
     .route("/favorites/:dishId")
-    .post(validateUser, (req, res, next)=>{
+    .post(authentication.validateUser, (req, res, next)=>{
       const { dishId } = req.params;
       favorite.create({
         userId: req.user.user.guid, dishId
@@ -144,7 +141,7 @@ userRouter
           res.json({err, user: req.user});
       })
     })
-    .delete(validateUser, (req, res, next)=>{
+    .delete(authentication.validateUser, (req, res, next)=>{
       const { dishId } = req.params;
       favorite.destroy({
         where:{

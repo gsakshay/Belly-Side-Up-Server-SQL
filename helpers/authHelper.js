@@ -26,4 +26,21 @@ const validateUser = (req, res, next) => {
     }
 }
 
-module.exports = validateUser;
+const validateAdmin = (req, res, next) => {
+    try{
+        const admin = req.user.user.admin;
+        if(admin){
+            next()
+        }else{
+            throw new Error("Only admins can operate this route")
+        }
+    }catch(err){
+        res.status(401).json({
+            error: true,
+            msg: "Only admins can operate this route",
+        });
+    }
+}
+
+exports.validateUser = validateUser;
+exports.validateAdmin = validateAdmin;

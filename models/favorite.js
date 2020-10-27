@@ -1,5 +1,6 @@
 const { DataTypes, Model } = require('sequelize');
 const sequelize = require('../database/database');
+const dish = require('./dishes');
 
 class favorite extends Model {}
 favorite.init({
@@ -22,6 +23,6 @@ favorite.init({
   sequelize,
 });
 
-favorite.sync().then(()=>console.log("Table is created/updated"))
+favorite.sync({alter: true}).then(()=>console.log("Table is created/updated"))
 
 module.exports =  favorite;

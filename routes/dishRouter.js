@@ -1,8 +1,10 @@
 const express = require("express");
 const uuid = require('uuid');
 const dish  = require("../models/dishes")
-const validateUser = require("../authenticate")
-const upload = require("../helpers/imageUplaod")
+const authentication = require("../helpers/authHelper")
+const upload = require("../helpers/imageUplaod");
+const user = require("../models/users");
+const comment = require("../models/comments")
 
 const dishRouter = express.Router();
 dishRouter.use(express.json());
@@ -18,7 +20,7 @@ dishRouter
         })
         .catch(err => res.render('error', {error: err}))
     })
-    .post(validateUser, upload.single('image'), (req, res, next) => {
+    .post(authentication.validateUser, authentication.validateAdmin, upload.single('image'), (req, res, next) => {
         const {name, description, category, label, price, featured} = req.body;
         let image = req.file.path;
         const host = process.env.PORT || 'localhost:3000'
@@ -35,11 +37,11 @@ dishRouter
             res.json({err});
         })
     })
-    .put(validateUser, (req, res, next) => {
+    .put(authentication.validateUser, authentication.validateAdmin, (req, res, next) => {
         res.statusCode = 403;
         res.end("PUT operation not supported on /dishes");
     })
-    .delete(validateUser, (req, res, next) => {
+    .delete(authentication.validateUser, authentication.validateAdmin, (req, res, next) => {
         dish.destroy({
             truncate: true
         }).then(dishes=>{
@@ -47,7 +49,7 @@ dishRouter
             res.setHeader("Content-Type", "application/json");
             res.json("All dishes deleted");
         }).catch(err=>{
-            next(err);
+            res.json(err);
         })
     });
 
@@ -60,25 +62,23 @@ dishRouter
         dish.findOne({
             where:{
                 guid: dishId
-            }
+            },
+            include: { all: true }
         }).then(dish=>{
-            dish.getComments()
-                .then(comments=>{
-                    res.statusCode = 200;
-                    res.setHeader("Content-Type", "application/json");
-                    res.json({dish, comments});
-                })
+            res.statusCode = 200;
+            res.setHeader("Content-Type", "application/json");
+            res.json(dish);
         }).catch(err=>{
-            next(err);
+            res.json(err);
         })
     })
 
-    .post(validateUser, (req, res, next) => {
+    .post(authentication.validateUser, authentication.validateAdmin, (req, res, next) => {
     res.statusCode = 403;
     res.end("POST operation not supported on /dishes/" + req.params.dishId);
     })
 
-    .put(validateUser, (req, res, next) => {
+    .put(authentication.validateUser, authentication.validateAdmin, (req, res, next) => {
         const  {dishId} = req.params;
         const {name, description, image, category, label, price, featured} = req.body;
         dish.update({
@@ -98,15 +98,15 @@ dishRouter
                     res.setHeader("Content-Type", "application/json");
                     res.json(dish);
                 }).catch(err=>{
-                    next(err);
+                    res.json(err);
                 })
             }
         }).catch(err=>{
-            next(err);
+            res.json(err);
         })
     })
 
-    .delete(validateUser, (req, res, next) => {
+    .delete(authentication.validateUser, authentication.validateAdmin, (req, res, next) => {
         const  {dishId} = req.params;
         dish.destroy({
             where: {
@@ -117,7 +117,7 @@ dishRouter
                 res.setHeader("Content-Type", "application/json");
                 res.json("Dish deleted");
         }).catch(err=>{
-                next(err);
+                res.json(err);
         })
     });
 

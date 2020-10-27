@@ -39,6 +39,6 @@ comment.init({
   sequelize,
 });
 
-comment.sync().then(()=>console.log("Table is created/updated"))
+comment.sync({alter: true}).then(()=>console.log("Table is created/updated"))
 
 module.exports =  comment;
