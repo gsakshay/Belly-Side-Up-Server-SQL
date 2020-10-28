@@ -2,6 +2,7 @@ const { DataTypes, Model } = require('sequelize');
 const sequelize = require('../database/database');
 const comment = require("./comments");
 const favorite = require('./favorite');
+const feedback = require('./feedback');
 const order = require('./orders');
 
 class user extends Model {}
@@ -59,6 +60,15 @@ user.hasMany(order, {
   foreignKey: 'userId'
 });
 order.belongsTo(user, {
+  sourceKey: "id",
+  foreignKey: 'userId'
+})
+
+user.hasMany(feedback, {
+  sourceKey: "id",
+  foreignKey: 'userId'
+});
+feedback.belongsTo(user, {
   sourceKey: "id",
   foreignKey: 'userId'
 })
