@@ -12,7 +12,7 @@ orderRouter.use(express.json());
 
 orderRouter
     .get("/", authentication.validateUser, (req, res, next) => {
-        const userId = req.user.user.guid
+        const userId = req.user.user.id
         order.findAll({
             where:{
                 userId
@@ -31,7 +31,7 @@ orderRouter
     .post("/:dishId",authentication.validateUser, (req, res, next) => {
         const { dishId } = req.params;
         order.create({
-        guid: uuid.v4(), userId: req.user.user.guid, dishId, 
+        id: uuid.v4(), userId: req.user.user.id, dishId 
         }).then(order=>{
             res.statusCode = 200;
             res.setHeader("Content-Type", "application/json");
@@ -50,7 +50,7 @@ orderRouter
             isDelivered: true
         },{
             where:{
-                guid: orderId
+                id: orderId
             }
         }).then(order=>{
             if(order){
@@ -72,7 +72,7 @@ orderRouter
         const { orderId } = req.params;
         order.destroy({
             where: {
-                guid: orderId
+                id: orderId
             }
         }).then(order=>{
             if(order){

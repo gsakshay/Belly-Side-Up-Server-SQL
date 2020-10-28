@@ -24,7 +24,7 @@ leaderRouter
     const host = process.env.PORT || 'localhost:3000'
     image = host + image.replace("public", "")
     leader.create({
-        guid: uuid.v4(), name, image, designation, abbr, description , featured
+        id: uuid.v4(), name, image, designation, abbr, description , featured
     }).then(leader=>{
         res.statusCode = 200;
         res.setHeader("Content-Type", "application/json");
@@ -55,7 +55,7 @@ leaderRouter
     const { leaderId } = req.params;
     leader.findOne({
         where:{
-            guid: leaderId
+            id: leaderId
         }
     }).then(leader=>{
         res.statusCode = 200;
@@ -76,13 +76,13 @@ leaderRouter
         name, image, designation, abbr, description , featured
     }, {
         where:{
-            guid: leaderId
+            id: leaderId
         }
     }).then(leaderUpdated=>{
         if(leaderUpdated){
             leader.findOne({
                 where:{
-                    guid: leaderId
+                    id: leaderId
                 }
             }).then(leader=>{
                 res.statusCode = 200;
@@ -100,7 +100,7 @@ leaderRouter
     const { leaderId } = req.params;
     leader.destroy({
         where: {
-            guid: leaderId
+            id: leaderId
         }
     }).then(leader=>{
         res.statusCode = 200;

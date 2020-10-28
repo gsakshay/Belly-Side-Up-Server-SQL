@@ -29,7 +29,7 @@ commentRouter
         const {dishId} = req.params;
         const {rating, comment: newComment} = req.body;
         comment.create({
-        guid: uuid.v4(), rating, comment: newComment, dishId, userId: req.user.user.guid
+        id: uuid.v4(), rating, comment: newComment, dishId, userId: req.user.user.id
         }).then(comment=>{
             res.statusCode = 200;
             res.setHeader("Content-Type", "application/json");
@@ -45,8 +45,8 @@ commentRouter
         const  { commentId } = req.params;
         comment.destroy({
             where: {
-                guid: commentId,
-                userId: req.user.user.guid
+                id: commentId,
+                userId: req.user.user.id
             }
         }).then(comment=>{
             if(comment){

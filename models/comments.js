@@ -5,13 +5,8 @@ class comment extends Model {}
 comment.init({
     id: {
       allowNull: false,
-      autoIncrement: true,
-      primaryKey: true,
-      type: DataTypes.BIGINT,
-    },
-    guid: {
-      allowNull: false,
       type: DataTypes.UUID,
+      primaryKey: true,
       unique: true,
     },
     userId: {
@@ -39,6 +34,6 @@ comment.init({
   sequelize,
 });
 
-comment.sync({alter: true}).then(()=>console.log("Table is created/updated"))
+comment.sync().then(()=>console.log("Table is created/updated"))
 
 module.exports =  comment;

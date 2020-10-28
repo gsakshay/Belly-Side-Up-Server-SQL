@@ -24,10 +24,10 @@ favorite.init({
 });
 
 favorite.belongsTo(dish, {
-  sourceKey: "guid",
+  sourceKey: "id",
   foreignKey: 'dishId'
 });
 
-favorite.sync({alter: true}).then(()=>console.log("Table is created/updated"))
+favorite.sync().then(()=>console.log("Table is created/updated"))
 
 module.exports =  favorite;

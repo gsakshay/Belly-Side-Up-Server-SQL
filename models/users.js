@@ -8,13 +8,8 @@ class user extends Model {}
 user.init({
     id: {
       allowNull: false,
-      autoIncrement: true,
-      primaryKey: true,
-      type: DataTypes.BIGINT,
-    },
-    guid: {
-      allowNull: false,
       type: DataTypes.UUID,
+      primaryKey: true,
       unique: true
     },
     firstName: {
@@ -42,32 +37,32 @@ user.init({
 });
 
 user.hasMany(comment, {
-  sourceKey: "guid",
+  sourceKey: "id",
   foreignKey: 'userId'
 });
 comment.belongsTo(user, {
-  sourceKey: "guid",
+  sourceKey: "id",
   foreignKey: 'userId'
 });
 
 user.hasMany(favorite, {
-  sourceKey: "guid",
+  sourceKey: "id",
   foreignKey: 'userId'
 });
 favorite.belongsTo(user ,{
-  sourceKey: "guid",
+  sourceKey: "id",
   foreignKey: 'userId'
 })
 
 user.hasMany(order, {
-  sourceKey: "guid",
+  sourceKey: "id",
   foreignKey: 'userId'
 });
 order.belongsTo(user, {
-  sourceKey: "guid",
+  sourceKey: "id",
   foreignKey: 'userId'
 })
 
-user.sync({alter: true}).then(()=>console.log("Table is created/updated"))
+user.sync().then(()=>console.log("Table is created/updated"))
 
 module.exports =  user;

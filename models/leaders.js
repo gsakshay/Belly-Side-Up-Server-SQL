@@ -6,13 +6,8 @@ class leader extends Model {}
 leader.init({
     id: {
       allowNull: false,
-      autoIncrement: true,
-      primaryKey: true,
-      type: DataTypes.BIGINT,
-    },
-    guid: {
-      allowNull: false,
       type: DataTypes.UUID,
+      primaryKey: true,
       unique: true,
     },
     name: {
@@ -45,6 +40,6 @@ leader.init({
   sequelize,
 });
 
-leader.sync({alter: true}).then(()=>console.log("Table is created/updated"))
+leader.sync().then(()=>console.log("Table is created/updated"))
 
 module.exports =  leader;

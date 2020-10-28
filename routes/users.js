@@ -31,7 +31,7 @@ userRouter
       try{
         bcrypt.hash(password, 10).then(hash=>{
           user.create({
-          guid: uuid.v4(), firstName, lastName, username, hash
+          id: uuid.v4(), firstName, lastName, username, hash
           })
           .then(user=>{
             res.statusCode = 200;
@@ -94,7 +94,7 @@ userRouter
       const { userId } = req.params;
       user.findOne({
         where: {
-          guid: userId
+          id: userId
         },
         include: comment
       }).then(user=>{
@@ -108,7 +108,7 @@ userRouter
   userRouter
     .route("/favorites/all")
     .get(authentication.validateUser, (req, res, next)=>{
-      const userId = req.user.user.guid
+      const userId = req.user.user.id
       favorite.findAll({
         where:{
           userId
@@ -130,7 +130,7 @@ userRouter
     .post(authentication.validateUser, (req, res, next)=>{
       const { dishId } = req.params;
       favorite.create({
-        userId: req.user.user.guid, dishId
+        userId: req.user.user.id, dishId
       })
       .then(favorite=>{
           res.statusCode = 200;
@@ -146,7 +146,7 @@ userRouter
       const { dishId } = req.params;
       favorite.destroy({
         where:{
-          userId: req.user.user.guid,
+          userId: req.user.user.id,
           dishId
         }
       })

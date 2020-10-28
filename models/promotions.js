@@ -6,13 +6,8 @@ class promotion extends Model {}
 promotion.init({
     id: {
       allowNull: false,
-      autoIncrement: true,
-      primaryKey: true,
-      type: DataTypes.BIGINT,
-    },
-    guid: {
-      allowNull: false,
       type: DataTypes.UUID,
+      primaryKey: true,
       unique: true,
     },
     name: {
@@ -48,6 +43,6 @@ promotion.init({
   sequelize,
 });
 
-promotion.sync({alter: true}).then(()=>console.log("Table is created/updated"))
+promotion.sync().then(()=>console.log("Table is created/updated"))
 
 module.exports =  promotion;

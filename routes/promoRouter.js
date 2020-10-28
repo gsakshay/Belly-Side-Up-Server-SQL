@@ -24,7 +24,7 @@ promoRouter
     const host = process.env.PORT || 'localhost:3000'
     image = host + image.replace("public", "")
     promotion.create({
-      guid: uuid.v4(), name, image, description, price, label, featured
+      id: uuid.v4(), name, image, description, price, label, featured
     }).then(promotion=>{
       res.statusCode = 200;
         res.setHeader("Content-Type", "application/json");
@@ -51,7 +51,7 @@ promoRouter
     const { promoId } = req.params;
     promotion.findOne({
         where:{
-            guid: promoId
+            id: promoId
         }
     }).then(promotion=>{
         res.statusCode = 200;
@@ -72,13 +72,13 @@ promoRouter
         name, image, description, price, label, featured
     }, {
         where:{
-            guid: promoId
+            id: promoId
         }
     }).then(promoUpdated=>{
         if(promoUpdated){
             promotion.findOne({
                 where:{
-                    guid: promoId
+                    id: promoId
                 }
             }).then(promotion=>{
                 res.statusCode = 200;
@@ -96,7 +96,7 @@ promoRouter
     const { promoId } = req.params;
     promotion.destroy({
       where: {
-          guid: promoId
+          id: promoId
       }
     }).then(promotion=>{
       res.statusCode = 200;

@@ -8,13 +8,8 @@ class dish extends Model {}
 dish.init({
     id: {
       allowNull: false,
-      autoIncrement: true,
+      type: DataTypes.UUID,
       primaryKey: true,   
-      type: DataTypes.BIGINT,
-    },
-    guid: {
-      allowNull: false,
-      type: DataTypes.UUID,   
       unique: true,
     },
     name: {
@@ -51,23 +46,23 @@ dish.init({
 });
 
 dish.hasMany(comment, {
-  sourceKey: "guid",
+  sourceKey: "id",
   foreignKey: 'dishId'
 });
 comment.belongsTo(dish, {
-  sourceKey: "guid",
+  sourceKey: "id",
   foreignKey: 'dishId'
 });
 
 dish.hasMany(order, {
-  sourceKey: "guid",
+  sourceKey: "id",
   foreignKey: 'dishId'
 });
 order.belongsTo(dish, {
-  sourceKey: "guid",
+  sourceKey: "id",
   foreignKey: 'dishId'
 });
 
-dish.sync({alter: true}).then(()=>console.log("Table is created/updated"))
+dish.sync().then(()=>console.log("Table is created/updated"))
 
 module.exports =  dish;

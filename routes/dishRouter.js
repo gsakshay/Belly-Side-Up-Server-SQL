@@ -26,7 +26,7 @@ dishRouter
         const host = process.env.PORT || 'localhost:3000'
         image = host + image.replace("public", "")
         dish.create({
-        guid: uuid.v4(), name, description, image, category, label, price, featured
+        id: uuid.v4(), name, description, image, category, label, price, featured
         }).then(dish=>{
             res.statusCode = 200;
             res.setHeader("Content-Type", "application/json");
@@ -61,7 +61,7 @@ dishRouter
         const  {dishId} = req.params;
         dish.findOne({
             where:{
-                guid: dishId
+                id: dishId
             },
             include: { all: true }
         }).then(dish=>{
@@ -85,13 +85,13 @@ dishRouter
             name, description, image, category, label, price, featured
         }, {
             where:{
-                guid: dishId
+                id: dishId
             }
         }).then(dishUpdated=>{
             if(dishUpdated){
                 dish.findOne({
                     where:{
-                        guid: dishId
+                        id: dishId
                     }
                 }).then(dish=>{
                     res.statusCode = 200;
@@ -110,7 +110,7 @@ dishRouter
         const  {dishId} = req.params;
         dish.destroy({
             where: {
-                guid: dishId
+                id: dishId
             }
         }).then(dish=>{
                 res.statusCode = 200;

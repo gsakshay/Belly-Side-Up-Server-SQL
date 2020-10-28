@@ -5,13 +5,8 @@ class order extends Model {}
 order.init({
     id: {
       allowNull: false,
-      autoIncrement: true,
-      primaryKey: true,
-      type: DataTypes.BIGINT,
-    },
-    guid: {
-      allowNull: false,
       type: DataTypes.UUID,
+      primaryKey: true,
       unique: true
     },
     userId: {
@@ -31,6 +26,6 @@ order.init({
   sequelize,
 });
 
-order.sync({alter: true}).then(()=>console.log("Table is created/updated"))
+order.sync().then(()=>console.log("Table is created/updated"))
 
 module.exports =  order;
