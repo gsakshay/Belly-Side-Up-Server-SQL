@@ -18,13 +18,18 @@ dishRouter
             res.setHeader("Content-Type", "application/json");
             res.json(dishes);
         })
-        .catch(err => res.render('error', {error: err}))
+        .catch(err => {
+            res.statusCode = 400;
+            res.setHeader("Content-Type", "application/json");
+            res.json(err)
+        })
     })
     .post(authentication.validateUser, authentication.validateAdmin, upload.single('image'), (req, res, next) => {
         const {name, description, category, label, price, featured} = req.body;
         let image = req.file.path;
-        const host = process.env.PORT || 'localhost:3000'
+        const host = process.env.PORT || ''
         image = host + image.replace("public", "")
+        image = image.replace("\\", "")
         dish.create({
         id: uuid.v4(), name, description, image, category, label, price, featured
         }).then(dish=>{
@@ -43,13 +48,16 @@ dishRouter
     })
     .delete(authentication.validateUser, authentication.validateAdmin, (req, res, next) => {
         dish.destroy({
-            truncate: true
+            truncate: true,
+            cascade: true
         }).then(dishes=>{
             res.statusCode = 200;
             res.setHeader("Content-Type", "application/json");
             res.json("All dishes deleted");
         }).catch(err=>{
-            res.json(err);
+            res.statusCode = 400;
+            res.setHeader("Content-Type", "application/json");
+            res.json(err)
         })
     });
 
@@ -69,7 +77,9 @@ dishRouter
             res.setHeader("Content-Type", "application/json");
             res.json(dish);
         }).catch(err=>{
-            res.json(err);
+            res.statusCode = 400;
+            res.setHeader("Content-Type", "application/json");
+            res.json(err)
         })
     })
 
@@ -98,11 +108,15 @@ dishRouter
                     res.setHeader("Content-Type", "application/json");
                     res.json(dish);
                 }).catch(err=>{
-                    res.json(err);
+                    res.statusCode = 400;
+                    res.setHeader("Content-Type", "application/json");
+                    res.json(err)
                 })
             }
         }).catch(err=>{
-            res.json(err);
+            res.statusCode = 400;
+            res.setHeader("Content-Type", "application/json");
+            res.json(err)
         })
     })
 
@@ -117,7 +131,9 @@ dishRouter
                 res.setHeader("Content-Type", "application/json");
                 res.json("Dish deleted");
         }).catch(err=>{
-                res.json(err);
+                res.statusCode = 400;
+                res.setHeader("Content-Type", "application/json");
+                res.json(err)
         })
     });
 

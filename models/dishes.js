@@ -47,7 +47,9 @@ dish.init({
 
 dish.hasMany(comment, {
   sourceKey: "id",
-  foreignKey: 'dishId'
+  foreignKey: 'dishId',
+  onDelete: "CASCADE",
+  onUpdate: "CASCADE",
 });
 comment.belongsTo(dish, {
   sourceKey: "id",
@@ -56,7 +58,9 @@ comment.belongsTo(dish, {
 
 dish.hasMany(order, {
   sourceKey: "id",
-  foreignKey: 'dishId'
+  foreignKey: 'dishId',
+  onDelete: "CASCADE",
+  onUpdate: "CASCADE",
 });
 order.belongsTo(dish, {
   sourceKey: "id",

@@ -16,13 +16,18 @@ leaderRouter
         res.setHeader("Content-Type", "application/json");
         res.json(leaders);
     })
-    .catch(err => res.render('error', {error: err}))
+    .catch(err => {
+        res.statusCode = 400;
+        res.setHeader("Content-Type", "application/json");
+        res.json(err)
+    })
   })
   .post(authentication.validateUser, authentication.validateAdmin, upload.single('image'),  (req, res, next) => {
     const { name, designation, abbr, description , featured } = req.body;
     let image = req.file.path;
-    const host = process.env.PORT || 'localhost:3000'
+    const host = process.env.PORT || ''
     image = host + image.replace("public", "")
+    image = image.replace("\\", "")
     leader.create({
         id: uuid.v4(), name, image, designation, abbr, description , featured
     }).then(leader=>{
@@ -30,7 +35,9 @@ leaderRouter
         res.setHeader("Content-Type", "application/json");
         res.json(leader);
     }).catch(err=>{
-        res.json(err);
+        res.statusCode = 400;
+        res.setHeader("Content-Type", "application/json");
+        res.json(err)
     })
   })
   .put(authentication.validateUser, authentication.validateAdmin, (req, res, next) => {
@@ -45,7 +52,9 @@ leaderRouter
         res.setHeader("Content-Type", "application/json");
         res.json("All leaders deleted");
     }).catch(err=>{
-        res.json(err);
+            res.statusCode = 400;
+            res.setHeader("Content-Type", "application/json");
+            res.json(err)
     })
   });
 
@@ -62,7 +71,9 @@ leaderRouter
         res.setHeader("Content-Type", "application/json");
         res.json(leader);
     }).catch(err=>{
-        res.json(err);
+        res.statusCode = 400;
+        res.setHeader("Content-Type", "application/json");
+        res.json(err)
     })
   })
   .post(authentication.validateUser, authentication.validateAdmin, (req, res, next) => {
@@ -89,11 +100,15 @@ leaderRouter
                 res.setHeader("Content-Type", "application/json");
                 res.json(leader);
             }).catch(err=>{
-                res.json(err);
+                res.statusCode = 400;
+                res.setHeader("Content-Type", "application/json");
+                res.json(err)
             })
         }
     }).catch(err=>{
-        res.json(err);
+        res.statusCode = 400;
+        res.setHeader("Content-Type", "application/json");
+        res.json(err)
     })
   })
   .delete(authentication.validateUser, authentication.validateAdmin, (req, res, next) => {
@@ -107,7 +122,9 @@ leaderRouter
         res.setHeader("Content-Type", "application/json");
         res.json("Given leader deleted");
     }).catch(err=>{
-        res.json(err);
+        res.statusCode = 400;
+        res.setHeader("Content-Type", "application/json");
+        res.json(err)
     })
   });
 

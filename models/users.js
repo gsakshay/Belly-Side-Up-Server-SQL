@@ -21,6 +21,14 @@ user.init({
         type: DataTypes.STRING,
         allowNull: true,
     },
+    address: {
+        type: DataTypes.TEXT,
+        allowNull: true,
+    },
+    phno: {
+        type: DataTypes.TEXT,
+        allowNull: true,
+    },
     admin:{
         type: DataTypes.BOOLEAN,
         defaultValue: false,  
@@ -39,7 +47,9 @@ user.init({
 
 user.hasMany(comment, {
   sourceKey: "id",
-  foreignKey: 'userId'
+  foreignKey: 'userId',
+  onDelete: "CASCADE",
+  onUpdate: "CASCADE",
 });
 comment.belongsTo(user, {
   sourceKey: "id",
@@ -48,7 +58,9 @@ comment.belongsTo(user, {
 
 user.hasMany(favorite, {
   sourceKey: "id",
-  foreignKey: 'userId'
+  foreignKey: 'userId',
+  onDelete: "CASCADE",
+  onUpdate: "CASCADE",
 });
 favorite.belongsTo(user ,{
   sourceKey: "id",
@@ -57,7 +69,9 @@ favorite.belongsTo(user ,{
 
 user.hasMany(order, {
   sourceKey: "id",
-  foreignKey: 'userId'
+  foreignKey: 'userId',
+  onDelete: "CASCADE",
+  onUpdate: "CASCADE",
 });
 order.belongsTo(user, {
   sourceKey: "id",
@@ -66,7 +80,9 @@ order.belongsTo(user, {
 
 user.hasMany(feedback, {
   sourceKey: "id",
-  foreignKey: 'userId'
+  foreignKey: 'userId',
+  onDelete: "CASCADE",
+  onUpdate: "CASCADE",
 });
 feedback.belongsTo(user, {
   sourceKey: "id",

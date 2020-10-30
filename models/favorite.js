@@ -18,6 +18,11 @@ favorite.init({
       allowNull: false,
       type: DataTypes.UUID
     },
+    uniqueId: {
+      allowNull: false,
+      type: DataTypes.STRING,
+      unique: true
+    }
 }, {
   tableName: "favorites",
   sequelize,
@@ -25,7 +30,9 @@ favorite.init({
 
 favorite.belongsTo(dish, {
   sourceKey: "id",
-  foreignKey: 'dishId'
+  foreignKey: 'dishId',
+  onDelete: "CASCADE",
+  onUpdate: "CASCADE",
 });
 
 favorite.sync().then(()=>console.log("Table is created/updated"))

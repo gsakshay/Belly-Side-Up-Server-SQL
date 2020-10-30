@@ -27,20 +27,30 @@ userRouter
   })
   userRouter
     .post("/register", (req, res, next)=>{
-      const {firstName, lastName, username, password} = req.body;
+      const {firstName, lastName, username, password, phno, address} = req.body;
       try{
         bcrypt.hash(password, 10).then(hash=>{
           user.create({
-          id: uuid.v4(), firstName, lastName, username, hash
+          id: uuid.v4(), firstName, lastName, username, hash, phno, address
           })
           .then(user=>{
             res.statusCode = 200;
             res.setHeader("Content-Type", "application/json");
             res.json({ success: true, status: "Registration Successful!" });
-        }).catch(err=>res.json({error: err}))
+        }).catch(err=>{
+          res.statusCode = 400;
+          res.setHeader("Content-Type", "application/json");
+          res.json(err)
+        })
         }
-        ).catch(err=>res.json({error: err}))
+        ).catch(err=>{
+          res.statusCode = 400;
+          res.setHeader("Content-Type", "application/json");
+          res.json(err)
+        })
       }catch(err){
+        res.statusCode = 400;
+        res.setHeader("Content-Type", "application/json");
         res.json(err)
       }
     })
@@ -71,22 +81,21 @@ userRouter
           res.json({success: false, status: 'Please enter vaid details'});
         }
         }).catch(err=>{
+        res.statusCode = 403;
         res.setHeader('Content-Type', 'application/json');
         res.json({success: false, err});
       })
       }).catch(err=>{
+        res.statusCode = 403;
         res.setHeader('Content-Type', 'application/json');
         res.json({success: false, err});
       })
       }catch(err){
+        res.statusCode = 403;
         res.setHeader('Content-Type', 'application/json');
         res.json({success: false, err});
       }
-    })
-  userRouter  
-    .post("logout", authentication.validateUser, (req, res, next)=>{
-      
-    })  
+    });
 
   userRouter
     .route("/:userId")
@@ -101,8 +110,25 @@ userRouter
           res.json(user);
       })
       .catch(err=>{
-        res.json(err);
+        res.statusCode = 400;
+        res.setHeader("Content-Type", "application/json");
+        res.json(err)
       })
+    });
+
+  userRouter
+    .route("/user/single")
+    .get(authentication.validateUser, (req, res, next)=>{
+      if(req.user.user){
+        res.statusCode = 200;
+        res.setHeader("Content-Type", "application/json");
+        res.json(req.user.user)
+      }else{
+        res.statusCode = 400;
+        res.setHeader("Content-Type", "application/json");
+        res.json("No user with this auth token")
+      }
+      
     });
 
   userRouter
@@ -121,7 +147,9 @@ userRouter
           res.json(favorites);
       })
       .catch(err=>{
-        res.json(err)
+          res.statusCode = 400;
+          res.setHeader("Content-Type", "application/json");
+          res.json(err)
       })
     });
 
@@ -129,17 +157,22 @@ userRouter
     .route("/favorites/:dishId")
     .post(authentication.validateUser, (req, res, next)=>{
       const { dishId } = req.params;
+      const unique = req.user.user.id.toString() + dishId.toString()
       favorite.create({
-        userId: req.user.user.id, dishId
+        userId: req.user.user.id, dishId, uniqueId: unique.substring(0, 20)
       })
       .then(favorite=>{
           res.statusCode = 200;
           res.setHeader("Content-Type", "application/json");
           res.json(favorite);
       }).catch(err=>{
-          res.statusCode = 400
-          res.setHeader("Content-Type", "application/json");
+        res.statusCode = 400
+        if(err.name === "SequelizeUniqueConstraintError"){
+          newError = new Error("Dish is already in your favorites list")
+          res.json(newError)
+        }else{
           res.json({err, user: req.user});
+        }
       })
     })
     .delete(authentication.validateUser, (req, res, next)=>{

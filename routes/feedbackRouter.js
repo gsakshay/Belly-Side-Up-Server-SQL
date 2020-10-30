@@ -18,7 +18,11 @@ feedbackRouter
         res.setHeader("Content-Type", "application/json");
         res.json(feedbacks);
     })
-    .catch(err => res.render('error', {error: err}))
+    .catch(err => {
+        res.statusCode = 400;
+        res.setHeader("Content-Type", "application/json");
+        res.json(err)
+    })
   })
   .post(authentication.validateUser, (req, res, next) => {
     const userId = req.user.user.id; 
@@ -30,7 +34,9 @@ feedbackRouter
         res.setHeader("Content-Type", "application/json");
         res.json(feedback);
     }).catch(err=>{
-        res.json(err);
+          res.statusCode = 400;
+          res.setHeader("Content-Type", "application/json");
+          res.json(err)
     })
   });
 

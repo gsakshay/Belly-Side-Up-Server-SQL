@@ -22,6 +22,8 @@ commentRouter
             res.setHeader("Content-Type", "application/json");
             res.json(comments);
         }).catch(err=>{
+            res.statusCode = 400;
+            res.setHeader("Content-Type", "application/json");
             res.json(err)
         })
     })
@@ -55,7 +57,9 @@ commentRouter
                 res.json("Comment deleted");
             }
         }).catch(err=>{
-            res.json(err);
+            res.statusCode = 400;
+            res.setHeader("Content-Type", "application/json");
+            res.json(err)
         })
     });
 

@@ -17,25 +17,40 @@ orderRouter
             where:{
                 userId
             },
-            include: dish
+            include: [dish, user]
         })
         .then(orders => {
             res.statusCode = 200;
             res.setHeader("Content-Type", "application/json");
             res.json(orders);
         })
-        .catch(err => res.render('error', {error: err}))
+        .catch(err =>{
+            res.statusCode = 400;
+            res.setHeader("Content-Type", "application/json");
+            res.json(err)
+        })
     });
 
 orderRouter    
     .post("/:dishId",authentication.validateUser, (req, res, next) => {
         const { dishId } = req.params;
+        const id =  uuid.v4()
         order.create({
-        id: uuid.v4(), userId: req.user.user.id, dishId 
+        id, userId: req.user.user.id, dishId 
         }).then(order=>{
             res.statusCode = 200;
             res.setHeader("Content-Type", "application/json");
             res.json(order);
+            setTimeout(() => {
+                order.update({
+                    isDelivered: true
+                },{
+                    where:{
+                        id
+                    }
+                }).then(res=>console.log(res))
+                .catch(err=>console.log("The order has been deleted"))
+            }, 1200000);
         }).catch(err=>{
             res.statusCode = 400
             res.setHeader("Content-Type", "application/json");
@@ -83,7 +98,9 @@ orderRouter
                 throw new Error("Could not delete the order")
             }
         }).catch(err=>{
-            res.json(err);
+            res.statusCode = 400;
+            res.setHeader("Content-Type", "application/json");
+            res.json(err)
         })
     });
 

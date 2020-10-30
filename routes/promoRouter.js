@@ -21,15 +21,19 @@ promoRouter
   .post(authentication.validateUser, authentication.validateAdmin, upload.single('image'), (req, res, next) => {
     const {name, description, price, label, featured} = req.body;
     let image = req.file.path;
-    const host = process.env.PORT || 'localhost:3000'
+    const host = process.env.PORT || ''
     image = host + image.replace("public", "")
+    image = image.replace("\\", "")
     promotion.create({
       id: uuid.v4(), name, image, description, price, label, featured
     }).then(promotion=>{
       res.statusCode = 200;
         res.setHeader("Content-Type", "application/json");
         res.json(promotion);
-    }).catch(err => res.render('error', {error: err}))
+    }).catch(err => {
+      res.statusCode = 400;
+      res.setHeader("Content-Type", "application/json");
+      res.json('error', {error: err})})
   })
   .put(authentication.validateUser, authentication.validateAdmin, (req, res, next) => {
     res.statusCode = 403;
@@ -42,6 +46,11 @@ promoRouter
         res.statusCode = 200;
         res.setHeader("Content-Type", "application/json");
         res.json("All promos deleted");
+    })
+    .catch(err=>{
+          res.statusCode = 400;
+          res.setHeader("Content-Type", "application/json");
+          res.json(err)
     })
   });
 
@@ -58,7 +67,9 @@ promoRouter
         res.setHeader("Content-Type", "application/json");
         res.json(promotion);
     }).catch(err=>{
-        res.json(err);
+          res.statusCode = 400;
+          res.setHeader("Content-Type", "application/json");
+          res.json(err)
     })
   })
   .post(authentication.validateUser, authentication.validateAdmin, (req, res, next) => {
@@ -85,11 +96,15 @@ promoRouter
                 res.setHeader("Content-Type", "application/json");
                 res.json(promotion);
             }).catch(err=>{
-                res.json(err);
+                res.statusCode = 400;
+            res.setHeader("Content-Type", "application/json");
+            res.json(err)
             })
         }
     }).catch(err=>{
-        res.json(err);
+        res.statusCode = 400;
+            res.setHeader("Content-Type", "application/json");
+            res.json(err)
     })
   })
   .delete(authentication.validateUser, authentication.validateAdmin, (req, res, next) => {
@@ -103,7 +118,9 @@ promoRouter
       res.setHeader("Content-Type", "application/json");
       res.json("Promotion deleted");
     }).catch(err=>{
-      res.json(err);
+      res.statusCode = 400;
+      res.setHeader("Content-Type", "application/json");
+      res.json(err)
     })
   });
 
