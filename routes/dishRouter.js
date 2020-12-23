@@ -25,13 +25,13 @@ dishRouter
         })
     })
     .post(authentication.validateUser, authentication.validateAdmin, upload.single('image'), (req, res, next) => {
-        const {name, description, category, label, price, featured} = req.body;
+        const {name, description, category, label, price, featured, preparedBy} = req.body;
         let image = req.file.path;
         const host = process.env.PORT || ''
         image = host + image.replace("public", "")
         image = image.replace("\\", "")
         dish.create({
-        id: uuid.v4(), name, description, image, category, label, price, featured
+        id: uuid.v4(), name, description, image, category, label, price, featured, preparedBy
         }).then(dish=>{
             res.statusCode = 200;
             res.setHeader("Content-Type", "application/json");

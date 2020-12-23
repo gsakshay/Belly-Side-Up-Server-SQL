@@ -15,7 +15,7 @@ user.init({
     },
     firstName: {
         type: DataTypes.STRING,
-        allowNull: true
+        allowNull: false
     },
     lastName: {
         type: DataTypes.STRING,
@@ -23,11 +23,11 @@ user.init({
     },
     address: {
         type: DataTypes.TEXT,
-        allowNull: true,
+        allowNull: false,
     },
     phno: {
         type: DataTypes.TEXT,
-        allowNull: true,
+        allowNull: false,
     },
     admin:{
         type: DataTypes.BOOLEAN,

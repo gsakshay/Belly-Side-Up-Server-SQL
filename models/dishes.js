@@ -39,7 +39,7 @@ dish.init({
     featured: {
       type: DataTypes.BOOLEAN,
       default: false,
-    },
+    }
 }, {
   tableName: "dishes",
   sequelize,
