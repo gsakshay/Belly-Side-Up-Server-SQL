@@ -34,7 +34,7 @@ leader.init({
     featured: {
       type: DataTypes.BOOLEAN,
       default: false,
-    },
+    }
 }, {
   tableName: "leaders",
   sequelize,
