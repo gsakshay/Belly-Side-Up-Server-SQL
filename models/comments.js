@@ -13,14 +13,6 @@ comment.init({
       allowNull: false,
       type: DataTypes.UUID,
     },
-    rating: {
-      allowNull: false,
-      type: DataTypes.INTEGER,
-      validate:{
-        min: 1,
-        max: 5
-      }
-    },
     dishId: {
       allowNull: false,
       type: DataTypes.UUID

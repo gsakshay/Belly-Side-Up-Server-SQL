@@ -29,9 +29,9 @@ commentRouter
     })
     .post(authentication.validateUser, (req, res, next) => {
         const {dishId} = req.params;
-        const {rating, comment: newComment} = req.body;
+        const {comment: newComment} = req.body;
         comment.create({
-        id: uuid.v4(), rating, comment: newComment, dishId, userId: req.user.user.id
+        id: uuid.v4(), comment: newComment, dishId, userId: req.user.user.id
         }).then(comment=>{
             res.statusCode = 200;
             res.setHeader("Content-Type", "application/json");
