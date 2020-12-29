@@ -53,7 +53,9 @@ user.hasMany(comment, {
 });
 comment.belongsTo(user, {
   sourceKey: "id",
-  foreignKey: 'userId'
+  foreignKey: 'userId',
+  onDelete: "CASCADE",
+  onUpdate: "CASCADE",
 });
 
 user.hasMany(favorite, {
@@ -64,7 +66,9 @@ user.hasMany(favorite, {
 });
 favorite.belongsTo(user ,{
   sourceKey: "id",
-  foreignKey: 'userId'
+  foreignKey: 'userId',
+  onDelete: "CASCADE",
+  onUpdate: "CASCADE",
 })
 
 user.hasMany(order, {
@@ -75,7 +79,9 @@ user.hasMany(order, {
 });
 order.belongsTo(user, {
   sourceKey: "id",
-  foreignKey: 'userId'
+  foreignKey: 'userId',
+  onDelete: "CASCADE",
+  onUpdate: "CASCADE",
 })
 
 user.hasMany(feedback, {
@@ -86,7 +92,9 @@ user.hasMany(feedback, {
 });
 feedback.belongsTo(user, {
   sourceKey: "id",
-  foreignKey: 'userId'
+  foreignKey: 'userId',
+  onDelete: "CASCADE",
+  onUpdate: "CASCADE",
 })
 
 user.sync().then(()=>console.log("Table is created/updated"))

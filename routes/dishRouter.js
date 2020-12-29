@@ -6,6 +6,9 @@ const upload = require("../helpers/imageUplaod");
 const user = require("../models/users");
 const comment = require("../models/comments")
 
+/* const logs = require('../models/logs')
+const sequelize = require('../database/database') */
+
 const dishRouter = express.Router();
 dishRouter.use(express.json());
 

@@ -13,6 +13,7 @@ const leaderRouter = require('./routes/leaderRouter');
 const commentRouter = require("./routes/commentRouter");
 const feedbackRouter = require('./routes/feedbackRouter');
 const orderRouter = require("./routes/orderRouter")
+const logRourer = require("./routes/logRouter")
 
 const app = express();
 const cors = require('cors');
@@ -36,6 +37,7 @@ app.use('/leaders',leaderRouter);
 app.use('/comments',commentRouter);
 app.use('/orders',orderRouter);
 app.use('/feedback',feedbackRouter);
+app.use('/logs', logRourer)
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
